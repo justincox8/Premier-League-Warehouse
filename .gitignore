@@ -1,1 +1,6 @@
-*.env
+.venv/
+raw/
+.dlt/
+.env
+*.duckdb
+__pycache__/
