@@ -15,6 +15,7 @@ API = "https://api.football-data.org/v4/competitions/PL/matches"
 
 @dlt.resource(name= "pl-matches", write_disposition="append")
 def pl_matches(seasons):
+    ingestion_timestamp = datetime.now(timezone.utc).isoformat()
     for season in seasons:
         response = requests.get(
             API,
@@ -25,7 +26,7 @@ def pl_matches(seasons):
         )
     response.raise_for_status()
     for match in response.json()["matches"]:
-        match["ingestion_timestamp"] = datetime.now(timezone.utc).isoformat()
+        match["ingestion_timestamp"] = ingestion_timestamp
         match["season"] = season
         yield match
 
