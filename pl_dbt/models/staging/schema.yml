@@ -1,0 +1,20 @@
+\version: 2
+
+models:
+  - name: stg_pl_matches
+    description: One row per Premier League match, latest known state.
+    columns:
+      - name: match_id
+        tests: [unique, not_null]
+      - name: season
+        tests: [not_null]
+      - name: status
+        tests:
+          - accepted_values:
+                arguments:
+                    values: [SCHEDULED, TIMED, IN_PLAY, PAUSED, FINISHED,
+                       POSTPONED, SUSPENDED, CANCELLED, AWARDED]
+      - name: home_team_id
+        tests: [not_null]
+      - name: away_team_id
+        tests: [not_null]

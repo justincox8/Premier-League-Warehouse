@@ -4,3 +4,6 @@ raw/
 .env
 *.duckdb
 __pycache__/
+logs/
+target/
+dbt_packages/

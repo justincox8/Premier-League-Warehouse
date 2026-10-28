@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: football_data
+    meta:
+      external_location: "read_parquet('{{ env_var('RAW_DIR', '../raw') }}/football_data/{name}/*.parquet', union_by_name=true)"
+    tables:
+      - name: pl_matches
