@@ -1,3 +1,4 @@
+CREATE SCHEMA IF NOT EXISTS serving;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'dashboard') THEN
