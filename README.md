@@ -5,7 +5,7 @@ An end-to-end data engineering project that ingests Premier League match data, m
 **Stack:** Python · dlt · Parquet · DuckDB · dbt · Dagster · PostgreSQL · Streamlit · Docker Compose · uv
 
 
-![Dagster asset lineage](docs/dagster-lineage.jpg)
+![Dagster asset lineage](docs/dagster-lineage.png)
 ![Dashboard](docs/dashboard.png)
 
 
