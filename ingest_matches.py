@@ -30,13 +30,19 @@ def pl_matches(seasons):
         match["season"] = season
         yield match
 
-if __name__ == "__main__":
-    seasons = [int(s) for s in sys.argv[1:]] or [2026]
+
+RAW_DIR = Path(__file__).resolve().parent / "raw"
+
+
+def run_ingest(seasons: list[int]):
     pipeline = dlt.pipeline(
         pipeline_name="pl_raw",
-        destination=dlt.destinations.filesystem(
-            bucket_url=Path("raw").resolve().as_uri()
-        ),
+        destination=dlt.destinations.filesystem(bucket_url=RAW_DIR.as_uri()),
         dataset_name="football_data",
     )
-    print(pipeline.run(pl_matches(seasons), loader_file_format="parquet"))
+    return pipeline.run(pl_matches(seasons), loader_file_format="parquet")
+
+
+if __name__ == "__main__":
+    seasons = [int(s) for s in sys.argv[1:]] or [2026]
+    print(run_ingest(seasons))
