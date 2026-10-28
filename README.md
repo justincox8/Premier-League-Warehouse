@@ -6,7 +6,7 @@ An end-to-end data engineering project that ingests Premier League match data, m
 
 
 ![Dagster asset lineage](docs/dagster-lineage.png)
-![Dashboard](docs/dashboard.png)
+![Dashboard](docs/dashboard.gif)
 
 
 ## Architecture
