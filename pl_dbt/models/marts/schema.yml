@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: fact_team_matches
+    description: One row per team per finished match (each match unpivoted to both sides).
+    columns:
+      - name: team_match_id
+        data_tests: [unique, not_null]
+      - name: result
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [W, D, L]
+
+  - name: league_table
+    description: Points table per season, computed from finished matches only.
+    columns:
+      - name: team_name
+        data_tests: [not_null]
