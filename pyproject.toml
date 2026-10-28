@@ -10,4 +10,6 @@ dependencies = [
     "dlt[filesystem,parquet]>=1.31.0",
     "dotenv>=0.9.9",
     "duckdb>=1.5.6",
+    "psycopg[binary]>=3.3.6",
+    "streamlit>=1.66.1",
 ]
