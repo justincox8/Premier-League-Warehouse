@@ -1,34 +1,38 @@
 import os
 from dotenv import load_dotenv
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 import dlt
 from dlt.sources.helpers import requests
+import time
 
 load_dotenv()
 
 FOOTBALL_DATA_KEY = os.environ['FOOTBALL_DATA']
 API = "https://api.football-data.org/v4/competitions/PL/matches"
+leagues = ["PL", "BL1", "SA", "PD", "FL1", "DED", "PPL", "BSA", "CL"]
 
-
-@dlt.resource(name= "pl-matches", write_disposition="append")
-def pl_matches(seasons):
+@dlt.resource(name= "matches", write_disposition="append")
+def matches(seasons):
     ingestion_timestamp = datetime.now(timezone.utc).isoformat()
-    for season in seasons:
-        response = requests.get(
-            API,
-            headers = {
-                "X-Auth-Token": FOOTBALL_DATA_KEY
-            },
+    for league in leagues:
+        API = f"https://api.football-data.org/v4/competitions/{league}/matches"
+        for season in seasons:
+            response = requests.get(
+                API,
+                headers = {
+                    "X-Auth-Token": FOOTBALL_DATA_KEY
+                },
             params = {"season": season}
-        )
-    response.raise_for_status()
-    for match in response.json()["matches"]:
-        match["ingestion_timestamp"] = ingestion_timestamp
-        match["season"] = season
-        yield match
+            )
+            response.raise_for_status()
+            for matches in response.json()["matches"]:
+                matches["ingestion_timestamp"] = ingestion_timestamp
+                matches["season"] = season
+                matches["league"] = league
+                yield matches
+        time.sleep(7)  
 
 
 RAW_DIR = Path(__file__).resolve().parent / "raw"
@@ -36,13 +40,14 @@ RAW_DIR = Path(__file__).resolve().parent / "raw"
 
 def run_ingest(seasons: list[int]):
     pipeline = dlt.pipeline(
-        pipeline_name="pl_raw",
+        pipeline_name="football_raw",
         destination=dlt.destinations.filesystem(bucket_url=RAW_DIR.as_uri()),
-        dataset_name="football_data",
+        dataset_name="match_data",
     )
-    return pipeline.run(pl_matches(seasons), loader_file_format="parquet")
+    return pipeline.run(matches(seasons), loader_file_format="parquet")
 
+seasons = [2023, 2024, 2025, 2026]
 
 if __name__ == "__main__":
-    seasons = [int(s) for s in sys.argv[1:]] or [2026]
-    print(run_ingest(seasons))
+    for season in seasons:
+        print(f"{season}: {run_ingest([season])}")

@@ -1,6 +1,6 @@
 import duckdb
 
-P="raw/football_data/pl_matches/*.parquet"
+P="raw/match_data/matches/*.parquet"
 
 print(duckdb.sql(f"""
     WITH latest AS (
@@ -20,4 +20,15 @@ print(duckdb.sql(f"""
 print(duckdb.sql(f"""
     SELECT count(*) AS snapshots, count(DISTINCT ingestion_timestamp) AS runs
     FROM read_parquet('{P}')
+"""))
+
+print(duckdb.sql(f"""
+    SELECT
+        league,
+        season,
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT id) AS unique_matches
+    FROM read_parquet('{P}', union_by_name=true)
+    GROUP BY league, season
+    ORDER BY season, league
 """))
