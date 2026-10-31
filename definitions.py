@@ -26,7 +26,7 @@ class IngestConfig(dg.Config):
     seasons: list[int] | None = None  # None means the current season
 
 
-@dg.asset(key=["football_data", "pl_matches"], group_name="raw")
+@dg.asset(key=["match_data", "matches"], group_name="raw")
 def pl_matches_raw(context: dg.AssetExecutionContext, config: IngestConfig):
     seasons = config.seasons or [current_season()]
     context.log.info(f"Ingesting seasons {seasons}")
@@ -36,7 +36,7 @@ def pl_matches_raw(context: dg.AssetExecutionContext, config: IngestConfig):
 
 
 # ---- Assets 2+: every dbt model (staging, marts) ----
-dbt_project = DbtProject(project_dir=ROOT / "pl_dbt")
+dbt_project = DbtProject(project_dir=ROOT / "football_dbt")
 dbt_project.prepare_if_dev()
 
 
@@ -95,7 +95,7 @@ def postgres_serving_layer(
 
 # ---- Automation ----
 refresh_job = dg.define_asset_job(
-    "refresh_pl_warehouse", selection=dg.AssetSelection.all()
+    "refresh_warehouse", selection=dg.AssetSelection.all()
 )
 
 daily_refresh = dg.ScheduleDefinition(
